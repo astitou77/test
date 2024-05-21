@@ -30,9 +30,9 @@ pipeline {
             steps {
                 script {
                     // Replace this with your actual deployment logic
-                    sh 'ssh astitou@172.16.25.140 "/home/astitou/Desktop/apache-tomcat-9.0.89-HelloWorld/shutdown.sh"'
-		    sh 'scp ${WAR_FILE} astitou@172.16.25.140:/home/astitou/Desktop/apache-tomcat-9.0.89-HelloWorld/webapps'
-                    sh 'ssh astitou@172.16.25.140 "/home/astitou/Desktop/apache-tomcat-9.0.89-HelloWorld/startup.sh"'
+                    sh 'ssh -o StrictHostKeyChecking=no astitou@172.16.25.140 "/home/astitou/Desktop/apache-tomcat-9.0.89-HelloWorld/shutdown.sh"'
+		    sh 'scp -o StrictHostKeyChecking=no ${WAR_FILE} astitou@172.16.25.140:/home/astitou/Desktop/apache-tomcat-9.0.89-HelloWorld/webapps'
+                    sh 'ssh -o StrictHostKeyChecking=no astitou@172.16.25.140 "/home/astitou/Desktop/apache-tomcat-9.0.89-HelloWorld/startup.sh"'
                 }
             }
         }
