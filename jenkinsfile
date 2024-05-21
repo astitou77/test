@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         GIT_SSH_COMMAND = 'ssh -o StrictHostKeyChecking=no'
-        REPO_URL = 'git@gitlab.com:astitou77/test.git'
+        REPO_URL = 'git@github.com:astitou77/test.git'
         CREDENTIALS_ID = 'Adnane_Jenkins_ID_2'
         ARTIFACTORY_SERVER = 'localhost:8081'
         ARTIFACTORY_REPO = 'adnane-maven-key'
