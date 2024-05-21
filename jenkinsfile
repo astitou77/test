@@ -25,27 +25,14 @@ pipeline {
             }
         }
 
-        stage('Upload to Artifactory') {
-            steps {
-                script {
-                    def server = Artifactory.server "${ARTIFACTORY_SERVER}"
-                    def uploadSpec = """{
-                        "files": [{
-                            "pattern": "${WAR_FILE}",
-                            "target": "${ARTIFACTORY_REPO}/"
-                        }]
-                    }"""
-                    server.upload spec: uploadSpec
-                }
-            }
-        }
 
         stage('Deploy to Application Server') {
             steps {
                 script {
                     // Replace this with your actual deployment logic
-                    sh 'scp ${WAR_FILE} user@your-app-server:/path/to/deploy'
-                    sh 'ssh user@your-app-server "systemctl restart your-app-service"'
+                    sh 'ssh astitou@172.16.25.140 "/home/astitou/Desktop/apache-tomcat-9.0.89-HelloWorld/shutdown.sh"'
+		    sh 'scp ${WAR_FILE} astitou@172.16.25.140:/home/astitou/Desktop/apache-tomcat-9.0.89-HelloWorld/webapps'
+                    sh 'ssh astitou@172.16.25.140 "/home/astitou/Desktop/apache-tomcat-9.0.89-HelloWorld/startup.sh"'
                 }
             }
         }
