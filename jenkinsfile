@@ -1,10 +1,62 @@
 pipeline {
-  agent any
-  stages {
-    stage('hello') {
-      steps {
-        sh 'echo "Hello World"'
-      }
+    agent any
+
+    environment {
+        GIT_SSH_COMMAND = 'ssh -o StrictHostKeyChecking=no'
+        REPO_URL = 'git@gitlab.com:astitou77/test.git'
+        CREDENTIALS_ID = 'Adnane_Jenkins_ID'
+        ARTIFACTORY_SERVER = 'localhost:8081'
+        ARTIFACTORY_REPO = 'adnane-maven-key'
+        WAR_FILE = 'target/your-application.war'
     }
-  }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                script {
+                    git branch: 'main', url: "${REPO_URL}", credentialsId: "${CREDENTIALS_ID}"
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Upload to Artifactory') {
+            steps {
+                script {
+                    def server = Artifactory.server "${ARTIFACTORY_SERVER}"
+                    def uploadSpec = """{
+                        "files": [{
+                            "pattern": "${WAR_FILE}",
+                            "target": "${ARTIFACTORY_REPO}/"
+                        }]
+                    }"""
+                    server.upload spec: uploadSpec
+                }
+            }
+        }
+
+        stage('Deploy to Application Server') {
+            steps {
+                script {
+                    // Replace this with your actual deployment logic
+                    sh 'scp ${WAR_FILE} user@your-app-server:/path/to/deploy'
+                    sh 'ssh user@your-app-server "systemctl restart your-app-service"'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build and Deployment succeeded!'
+        }
+        failure {
+            echo 'Build or Deployment failed.'
+        }
+    }
 }
